@@ -24,10 +24,22 @@ function Gameboard() {
         console.log(boardWithCellValues)
     }
 
+    const checkWinner = () => {
+        // check horizontally
+        for (let r = 0; r < rows; r++) {
+            if (board[r][0].getValue() !== '') {
+                if (board[r][0].getValue() === board[r][1].getValue() && board[r][1].getValue() === board[r][2].getValue()) {
+                    return board[r][0].getValue()
+                }
+            }
+        }
+    }
+
     return {
         getBoard,
         printBoard,
-        markCell
+        markCell,
+        checkWinner
     }
 }
 
@@ -77,14 +89,23 @@ function GameController(playerOneName, playerTwoName) {
         } else if (row < 3 && row > -1 && column < 3 && column > -1) {
             board.markCell(row, column, getActivePlayer().mark)
             switchPlayer()
-            console.log(board.getBoard()[row][column].getValue())
         } else {
             console.log('Invalid row and/or column input! Try again')
             return;
         }
 
+        if(board.checkWinner() !== undefined) {
+            if (board.checkWinner() === players[0].mark) {
+                console.log(`${players[0].name} wins!`)
+            } else {
+                console.log(`${players[1].name} wins!`)
+            }
+            activePlayer = players[0]
+            console.log('board reset!')
+            printNewRound()
+            return;
+        }
         printNewRound()
-
     }
 
     printNewRound();
