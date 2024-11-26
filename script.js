@@ -33,13 +33,33 @@ function Gameboard() {
                 }
             }
         }
+
+        // check vertically
+        for (let c = 0; c < columns; c++) {
+            if (board[0][c].getValue() !== '') {
+                if (board[0][c].getValue() === board[1][c].getValue() && board[1][c].getValue() === board[2][c].getValue()) {
+                    return board[0][c].getValue()
+                }
+            }
+        }
+    }
+
+    const resetBoard = () => {
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < columns; c++) {
+                if (board[r][c].getValue() !== '') {
+                    board[r][c] = Cell();
+                }
+            }
+        }
     }
 
     return {
         getBoard,
         printBoard,
         markCell,
-        checkWinner
+        checkWinner,
+        resetBoard
     }
 }
 
@@ -100,6 +120,7 @@ function GameController(playerOneName, playerTwoName) {
             } else {
                 console.log(`${players[1].name} wins!`)
             }
+            board.resetBoard()
             activePlayer = players[0]
             console.log('board reset!')
             printNewRound()
