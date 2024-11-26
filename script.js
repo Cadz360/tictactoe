@@ -16,11 +16,7 @@ function Gameboard() {
     const getBoard = () => board;
 
     const markCell = (row ,column, playerMark) => {
-        if (board[row][column].getValue() !== '') {
-            return;
-        } else {
             board[row][column].addMark(playerMark)
-        }
     }
 
     const printBoard = () => {
@@ -30,7 +26,8 @@ function Gameboard() {
 
     return {
         getBoard,
-        printBoard
+        printBoard,
+        markCell
     }
 }
 
@@ -49,6 +46,55 @@ function Cell() {
     }
 }
 
-const game = Gameboard();
+function GameController(playerOneName, playerTwoName) {
+    const board = Gameboard();
+    const players = [
+        {
+            name: playerOneName,
+            mark: 'o'
+        },
+        {
+            name: playerTwoName,
+            mark: 'x'
+        }
+    ]
+    let activePlayer = players[0];
+    
+    const switchPlayer = () => {
+        activePlayer = activePlayer === players[0] ? players[1] : players[0]
+    }
+    
+    const getActivePlayer = () => activePlayer;
+    
+    const printNewRound = () => {
+        board.printBoard()
+        console.log(`It's ${getActivePlayer().name} turn`)
+    }
 
-game.getBoard()
+    const playRound = (row, column) => {
+        if (board.getBoard()[row][column].getValue() !== '') {
+            console.log('Cell already has mark on it. Try again!')
+        } else if (row < 3 && row > -1 && column < 3 && column > -1) {
+            board.markCell(row, column, getActivePlayer().mark)
+            switchPlayer()
+            console.log(board.getBoard()[row][column].getValue())
+        } else {
+            console.log('Invalid row and/or column input! Try again')
+            return;
+        }
+
+        printNewRound()
+
+    }
+
+    printNewRound();
+
+    return {
+        playRound,
+        getActivePlayer,
+        getBoard: board.getBoard
+    }
+}
+
+
+const game = GameController('player1', 'player2');
