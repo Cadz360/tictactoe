@@ -42,6 +42,20 @@ function Gameboard() {
                 }
             }
         }
+
+        // check diagonally
+        if (board[0][0].getValue() !== '') {
+            if (board[0][0].getValue() === board[1][1].getValue() && board[1][1].getValue() === board[2][2].getValue()) {
+                return board[0][0].getValue()
+            }
+        }
+
+        // check anti-diagonally
+        if (board[2][0].getValue() !== '') {
+            if (board[2][0].getValue() === board[1][1].getValue() && board[1][1].getValue() === board[0][2].getValue()) {
+                return board[2][0].getValue()
+            }
+        }
     }
 
     const resetBoard = () => {
@@ -116,8 +130,10 @@ function GameController(playerOneName, playerTwoName) {
 
         if(board.checkWinner() !== undefined) {
             if (board.checkWinner() === players[0].mark) {
+                board.printBoard()
                 console.log(`${players[0].name} wins!`)
             } else {
+                board.printBoard()
                 console.log(`${players[1].name} wins!`)
             }
             board.resetBoard()
