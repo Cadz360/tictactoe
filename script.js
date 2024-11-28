@@ -10,18 +10,18 @@ function Gameboard() {
     for (let r = 0; r < rows; r++) {
         board[r] = [];
        for (let c = 0; c < columns; c++) {
-            board[r].push(Cell());
+            board[r].push(Square());
         }
     }
     const getBoard = () => board;
 
-    const markCell = (row ,column, playerMark) => {
+    const markSquare = (row ,column, playerMark) => {
             board[row][column].addMark(playerMark)
     }
 
     const printBoard = () => {
-        const boardWithCellValues = board.map((row) => row.map((cell) => cell.getValue()))
-        console.log(boardWithCellValues)
+        const boardWithSquareValues = board.map((row) => row.map((square) => square.getValue()))
+        console.log(boardWithSquareValues)
     }
 
     const checkWinner = () => {
@@ -62,7 +62,7 @@ function Gameboard() {
         for (let r = 0; r < rows; r++) {
             for (let c = 0; c < columns; c++) {
                 if (board[r][c].getValue() !== '') {
-                    board[r][c] = Cell();
+                    board[r][c] = Square();
                 }
             }
         }
@@ -71,13 +71,13 @@ function Gameboard() {
     return {
         getBoard,
         printBoard,
-        markCell,
+        markSquare,
         checkWinner,
         resetBoard
     }
 }
 
-function Cell() {
+function Square() {
     let value = '';
 
     const getValue = () => value;
@@ -119,9 +119,9 @@ function GameController(playerOneName, playerTwoName) {
 
     const playRound = (row, column) => {
         if (board.getBoard()[row][column].getValue() !== '') {
-            console.log('Cell already has mark on it. Try again!')
+            console.log('Square already has mark on it. Try again!')
         } else if (row < 3 && row > -1 && column < 3 && column > -1) {
-            board.markCell(row, column, getActivePlayer().mark)
+            board.markSquare(row, column, getActivePlayer().mark)
             switchPlayer()
         } else {
             console.log('Invalid row and/or column input! Try again')
@@ -153,6 +153,31 @@ function GameController(playerOneName, playerTwoName) {
         getBoard: board.getBoard
     }
 }
+const game = GameController('Player One', 'Player Two');
 
 
-const game = GameController('player1', 'player2');
+function ScreenController() {
+    const game = GameController('Player One', 'Player Two');
+    const playerTurnDiv = document.querySelector('.turn');
+    const boardDiv = document.querySelector('.board')
+
+    const board = game.getBoard()
+
+    //create squares
+    for (let i = 0; i < 9; i++) {
+        const squareDiv = document.createElement('div')
+        boardDiv.appendChild(squareDiv)
+        squareDiv.addEventListener('click', updateSquares)
+    }
+
+    function updateSquares() {
+        console.log('I have been clicked!')
+    }
+
+    return {
+    }
+
+}
+
+
+ScreenController() 
