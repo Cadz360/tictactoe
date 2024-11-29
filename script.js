@@ -163,16 +163,39 @@ function ScreenController() {
 
     const board = game.getBoard()
 
-    //create squares
-    for (let i = 0; i < 9; i++) {
-        const squareDiv = document.createElement('div')
-        boardDiv.appendChild(squareDiv)
-        squareDiv.addEventListener('click', updateSquares)
+    const updateScreen = () => {
+        //clear the board
+        boardDiv.textContent = '';
+        
+        // get the newest version of the board and player turn
+        const board = game.getBoard();
+        const activePlayer = game.getActivePlayer();
+
+        // display player's turn and declare winner when there's a winner
+        playerTurnDiv.textContent = `${activePlayer.name}'s turn...`
+        if (game.getWinner() !== undefined) {
+            playerTurnDiv.textContent = `Player ${game.getWinner()} wins!`
+        }
     }
 
-    function updateSquares() {
-        console.log('I have been clicked!')
+    const joinedSquares = board[0].concat(board[1], board[2]);
+
+    joinedSquares.forEach((square, index) => {
+        const squareDiv = document.createElement('div')
+        squareDiv.dataset.squareId = index
+        console.log(index)
+        squareDiv.textContent = square.getValue()
+        boardDiv.appendChild(squareDiv)
+    })
+
+
+    function clickHandlerBoard(e) {
+        const selectedSquare = e.target.dataset.squareId;
+
+        if (!selectedSquare) return;
     }
+
+    boardDiv.addEventListener('click', clickHandlerBoard)
 
     return {
     }
