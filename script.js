@@ -2,6 +2,7 @@ function Gameboard() {
     const rows = 3;
     const columns = 3;
     let board = [];
+    let gameOver = false;
 
     //3x3 2d Array that will represent the game board
     //For this 2d Array, row 0 will represent the top row and
@@ -16,7 +17,12 @@ function Gameboard() {
     const getBoard = () => board;
 
     const markSquare = (row ,column, playerMark) => {
+        if (gameOver) {
+            gameOver = false
             board[row][column].addMark(playerMark)
+        } else {
+            board[row][column].addMark(playerMark)
+        }
     }
 
     const printBoard = () => {
@@ -29,6 +35,7 @@ function Gameboard() {
         for (let r = 0; r < rows; r++) {
             if (board[r][0].getValue() !== '') {
                 if (board[r][0].getValue() === board[r][1].getValue() && board[r][1].getValue() === board[r][2].getValue()) {
+                    gameOver = true;
                     return board[r][0].getValue()
                 }
             }
@@ -38,6 +45,7 @@ function Gameboard() {
         for (let c = 0; c < columns; c++) {
             if (board[0][c].getValue() !== '') {
                 if (board[0][c].getValue() === board[1][c].getValue() && board[1][c].getValue() === board[2][c].getValue()) {
+                    gameOver = true;
                     return board[0][c].getValue()
                 }
             }
@@ -46,6 +54,7 @@ function Gameboard() {
         // check diagonally
         if (board[0][0].getValue() !== '') {
             if (board[0][0].getValue() === board[1][1].getValue() && board[1][1].getValue() === board[2][2].getValue()) {
+                gameOver = true;
                 return board[0][0].getValue()
             }
         }
@@ -53,6 +62,7 @@ function Gameboard() {
         // check anti-diagonally
         if (board[2][0].getValue() !== '') {
             if (board[2][0].getValue() === board[1][1].getValue() && board[1][1].getValue() === board[0][2].getValue()) {
+                gameOver = true;
                 return board[2][0].getValue()
             }
         }
@@ -68,12 +78,15 @@ function Gameboard() {
         }
     }
 
+    const isGameOver = () => gameOver;
+
     return {
         getBoard,
         printBoard,
         markSquare,
         checkWinner,
-        resetBoard
+        resetBoard,
+        isGameOver
     }
 }
 
@@ -105,6 +118,7 @@ function GameController(playerOneName, playerTwoName) {
         }
     ]
     let activePlayer = players[0];
+    let winner = '';
     
     const switchPlayer = () => {
         activePlayer = activePlayer === players[0] ? players[1] : players[0]
@@ -116,6 +130,8 @@ function GameController(playerOneName, playerTwoName) {
         board.printBoard()
         console.log(`It's ${getActivePlayer().name} turn`)
     }
+
+    const getWinner = () => winner;
 
     const playRound = (row, column) => {
         if (board.getBoard()[row][column].getValue() !== '') {
@@ -131,9 +147,11 @@ function GameController(playerOneName, playerTwoName) {
         if(board.checkWinner() !== undefined) {
             if (board.checkWinner() === players[0].mark) {
                 board.printBoard()
+                winner = players[0].name
                 console.log(`${players[0].name} wins!`)
             } else {
                 board.printBoard()
+                winner = players[1].name
                 console.log(`${players[1].name} wins!`)
             }
             board.resetBoard()
@@ -143,6 +161,13 @@ function GameController(playerOneName, playerTwoName) {
             return;
         }
         printNewRound()
+        if (winner === '') {
+            console.log('no winner')
+        } else {
+            winner = ''
+            console.log('winner on the loose')
+        }
+    
     }
 
     printNewRound();
@@ -151,7 +176,8 @@ function GameController(playerOneName, playerTwoName) {
         playRound,
         getActivePlayer,
         getBoard: board.getBoard,
-        checkWinner: board.checkWinner
+        isGameOver: board.isGameOver,
+        getWinner
     }
 }
 
@@ -160,6 +186,7 @@ function ScreenController() {
     const game = GameController('Player One', 'Player Two');
     const playerTurnDiv = document.querySelector('.turn');
     const boardDiv = document.querySelector('.board')
+
 
     const updateScreen = () => {
         //clear the board
@@ -170,9 +197,10 @@ function ScreenController() {
         const activePlayer = game.getActivePlayer();
 
         // display player's turn and declare winner when there's a winner
-        playerTurnDiv.textContent = `${activePlayer.name}'s turn...`
-        if (game.checkWinner() !== undefined) {
-            playerTurnDiv.textContent = `Player ${board.checkWinner()} wins!`
+        if (game.isGameOver()) {
+            playerTurnDiv.textContent = `${game.getWinner()} won!`
+        } else {
+            playerTurnDiv.textContent = `${activePlayer.name}'s turn...`
         }
 
         for (let r = 0; r < 3; r++) {
