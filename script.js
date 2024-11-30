@@ -150,18 +150,16 @@ function GameController(playerOneName, playerTwoName) {
     return {
         playRound,
         getActivePlayer,
-        getBoard: board.getBoard
+        getBoard: board.getBoard,
+        checkWinner: board.checkWinner
     }
 }
-const game = GameController('Player One', 'Player Two');
 
 
 function ScreenController() {
     const game = GameController('Player One', 'Player Two');
     const playerTurnDiv = document.querySelector('.turn');
     const boardDiv = document.querySelector('.board')
-
-    const board = game.getBoard()
 
     const updateScreen = () => {
         //clear the board
@@ -173,33 +171,33 @@ function ScreenController() {
 
         // display player's turn and declare winner when there's a winner
         playerTurnDiv.textContent = `${activePlayer.name}'s turn...`
-        if (game.getWinner() !== undefined) {
-            playerTurnDiv.textContent = `Player ${game.getWinner()} wins!`
+        if (game.checkWinner() !== undefined) {
+            playerTurnDiv.textContent = `Player ${board.checkWinner()} wins!`
+        }
+
+        for (let r = 0; r < 3; r++) {
+            for (let c = 0; c < 3; c++) {
+            const squareDiv = document.createElement('div')
+            squareDiv.dataset.row = `${r}`
+            squareDiv.dataset.column = `${c}`
+            squareDiv.textContent = board[r][c].getValue()
+            boardDiv.appendChild(squareDiv)  
+            }
         }
     }
 
-    const joinedSquares = board[0].concat(board[1], board[2]);
-
-    joinedSquares.forEach((square, index) => {
-        const squareDiv = document.createElement('div')
-        squareDiv.dataset.squareId = index
-        console.log(index)
-        squareDiv.textContent = square.getValue()
-        boardDiv.appendChild(squareDiv)
-    })
-
-
     function clickHandlerBoard(e) {
-        const selectedSquare = e.target.dataset.squareId;
-
-        if (!selectedSquare) return;
+        const selectedSquareRow = e.target.dataset.row
+        const selectedSquareColumn = e.target.dataset.column
+        console.log(selectedSquareColumn, selectedSquareRow)
+        if (!selectedSquareColumn || !selectedSquareRow) return;
+        game.playRound(selectedSquareRow, selectedSquareColumn)
+        updateScreen()
     }
 
     boardDiv.addEventListener('click', clickHandlerBoard)
 
-    return {
-    }
-
+    updateScreen()
 }
 
 
