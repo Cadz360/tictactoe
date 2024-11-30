@@ -186,7 +186,18 @@ function ScreenController() {
     const game = GameController('Player One', 'Player Two');
     const playerTurnDiv = document.querySelector('.turn');
     const boardDiv = document.querySelector('.board')
+    const gameContainer = document.querySelector('.container')
+    const inputContainerDiv = document.querySelector('.names-input-container')
+    const nameSubmitBtn = document.getElementById('submit-btn');
 
+    nameSubmitBtn.addEventListener('click', function() {
+        console.log(document.getElementById('player-one-name').value, document.getElementById('player-two-name').value)
+        if (gameContainer.contains(inputContainerDiv)) {
+            gameContainer.removeChild(inputContainerDiv)
+        } else {
+            gameContainer.appendChild(inputContainerDiv)
+        }
+    })
 
     const updateScreen = () => {
         //clear the board
