@@ -186,6 +186,7 @@ function GameController() {
         getActivePlayer,
         getBoard: board.getBoard,
         isGameOver: board.isGameOver,
+        resetBoard: board.resetBoard,
         getWinner,
         changePlayerName
     }
@@ -199,6 +200,7 @@ function ScreenController() {
     const divsContainer = document.querySelector('.container')
     const inputContainerDiv = document.querySelector('.names-input-container')
     const gameContainer = document.querySelector('.game-container')
+    const restartBtn = document.querySelector('.restart-btn')
     const nameSubmitBtn = document.getElementById('submit-btn');
 
     nameSubmitBtn.addEventListener('click', function() {
@@ -211,6 +213,11 @@ function ScreenController() {
         }
     })
 
+    restartBtn.addEventListener('click', function() {
+        game.resetBoard()
+        updateScreen()
+    })
+    
     const updateScreen = () => {
         //clear the board
         boardDiv.textContent = '';
@@ -218,7 +225,7 @@ function ScreenController() {
         // get the newest version of the board and player turn
         const board = game.getBoard();
         const activePlayer = game.getActivePlayer();
-
+        
         // display player's turn and declare winner when there's a winner
         if (game.isGameOver()) {
             playerTurnDiv.textContent = `${game.getWinner()} won!`
@@ -228,15 +235,15 @@ function ScreenController() {
 
         for (let r = 0; r < 3; r++) {
             for (let c = 0; c < 3; c++) {
-            const squareDiv = document.createElement('div')
-            squareDiv.dataset.row = `${r}`
-            squareDiv.dataset.column = `${c}`
-            squareDiv.textContent = board[r][c].getValue()
-            boardDiv.appendChild(squareDiv)  
+                const squareDiv = document.createElement('div')
+                squareDiv.dataset.row = `${r}`
+                squareDiv.dataset.column = `${c}`
+                squareDiv.textContent = board[r][c].getValue()
+                boardDiv.appendChild(squareDiv)  
             }
         }
     }
-
+    
     function clickHandlerBoard(e) {
         const selectedSquareRow = e.target.dataset.row
         const selectedSquareColumn = e.target.dataset.column
