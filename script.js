@@ -105,15 +105,15 @@ function Square() {
     }
 }
 
-function GameController(playerOneName, playerTwoName) {
+function GameController() {
     const board = Gameboard();
-    const players = [
+    let players = [
         {
-            name: playerOneName,
+            name: 'Player One',
             mark: 'o'
         },
         {
-            name: playerTwoName,
+            name: 'Player Two',
             mark: 'x'
         }
     ]
@@ -132,6 +132,15 @@ function GameController(playerOneName, playerTwoName) {
     }
 
     const getWinner = () => winner;
+
+    const changePlayerName = (playerOneOrTwo, name) => {
+        if (playerOneOrTwo === 1) {
+            players[0].name = name
+        } else {
+            players[1].name = name
+        }
+        if (!playerOneOrTwo) return;
+    }
 
     const playRound = (row, column) => {
         if (board.getBoard()[row][column].getValue() !== '') {
@@ -177,25 +186,28 @@ function GameController(playerOneName, playerTwoName) {
         getActivePlayer,
         getBoard: board.getBoard,
         isGameOver: board.isGameOver,
-        getWinner
+        getWinner,
+        changePlayerName
     }
 }
 
 
 function ScreenController() {
-    const game = GameController('Player One', 'Player Two');
+    const game = GameController();
     const playerTurnDiv = document.querySelector('.turn');
     const boardDiv = document.querySelector('.board')
-    const gameContainer = document.querySelector('.container')
+    const divsContainer = document.querySelector('.container')
     const inputContainerDiv = document.querySelector('.names-input-container')
+    const gameContainer = document.querySelector('.game-container')
     const nameSubmitBtn = document.getElementById('submit-btn');
 
     nameSubmitBtn.addEventListener('click', function() {
-        console.log(document.getElementById('player-one-name').value, document.getElementById('player-two-name').value)
-        if (gameContainer.contains(inputContainerDiv)) {
-            gameContainer.removeChild(inputContainerDiv)
-        } else {
-            gameContainer.appendChild(inputContainerDiv)
+        game.changePlayerName(1, document.getElementById('player-one-name').value)
+        game.changePlayerName(2, document.getElementById('player-two-name').value)
+        if (divsContainer.contains(inputContainerDiv)) {
+            divsContainer.removeChild(inputContainerDiv) 
+            gameContainer.classList.remove('no-display')
+            updateScreen()
         }
     })
 
@@ -236,7 +248,6 @@ function ScreenController() {
 
     boardDiv.addEventListener('click', clickHandlerBoard)
 
-    updateScreen()
 }
 
 
